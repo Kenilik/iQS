@@ -1,32 +1,28 @@
-<!-- begin loginbar-->
-<div id="login_bar" align='right'>
+<div id="login_bar">
     	
 	    <?php    	
-	    	$site = $this->input->cookie('thissiteid') ;
-			if($site === FALSE) {
-				// cookie doesn't exist
-				// admin user needs to login to set up site
-				if($this->session->userdata('is_logged_in') === TRUE) {
-					echo $this->session->userdata('qid') . " is logged in.";
-					echo form_open('login/logout') . form_submit('submit', 'logout');
-					
-				} else {
-					echo form_open('login/validate_credentials');
-					echo form_input('qid');
-					echo form_password('password');
-					echo form_submit('submit', 'login');
-					//echo anchor('login/signup', 'Create Account');
-					echo form_close();
-					echo 'Administrator must log in to configure this iQuickScan site.';				
-	
-				}
+	    	$siteid = $this->input->cookie('current_siteid') ;
+			$sitename = $this->input->cookie('current_sitename') ;
+			echo '<table><tr><td align="left">';
+			if ($siteid==FALSE) {
+				echo '<font align=left color=red>Site Administrator must login and configure this location before iQuickScan can be used.</font>';
+			} else {
+				echo '<font align=left>iQuickScan for ' . $sitename . ' @ : clock ';
+			}
+			echo '</td><td align="right">';
+
+			if($this->session->userdata('is_logged_in') === TRUE) {
+				echo form_open('auth/logout') . $this->session->userdata('qid') . " is logged in. " . form_submit('submit', 'logout') . form_close();
 				
 			} else {
-				// cookie exists now need to check if admin is logged in
-								
+				echo form_open('auth/validate_credentials');
+				echo form_input('qid');
+				echo form_password('password');
+				echo form_submit('submit', 'login');
+				echo form_close();
+				//echo 'Administrator must log in to configure this iQuickScan site.';				
 			}
-			echo $site;
-	     
+			echo '</td></tr></table>';
 		?>
     	
 </div><!-- end loginbar-->

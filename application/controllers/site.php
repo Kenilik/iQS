@@ -2,6 +2,23 @@
 
 class Site extends CI_Controller {
 
+	function __construct() {
+		parent::__construct();
+		$this->__site_is_set_up();
+	}
+
+	function __site_is_set_up()	{
+		$site_is_set_up = $this->input->cookie('current_siteid');
+		
+		if($site_is_set_up==FALSE)
+		{
+			$this->load->view('includes/header');
+			$this->load->view('includes/loginbar');
+			$this->load->view('includes/footer');
+		}
+			
+	}
+
 	function equipinuse(){
 		$data['EquipInUse'] = $this->equipreg_model->getEquipIDInUse();
 
@@ -9,7 +26,6 @@ class Site extends CI_Controller {
 		$data['header_title'] = "Equipment In Use" ;
 		$this->load->view('includes/template', $data);				
 	}
-
 
 
 	function home() {
@@ -47,7 +63,7 @@ class Site extends CI_Controller {
 		
 		//check if a barcode has been scanned in (if not the page is loading for the first time without a submit) 	
 		if ($bc === FALSE) {
-			$data['barcode'] = FALSE;
+			$data['Barcode'] = FALSE;
 		} else {
 			//lookup in the db for that barcode
 			/*
@@ -55,18 +71,18 @@ class Site extends CI_Controller {
 			 */
 			
 			//returns db query results or error message
-			$data['barcode'] = $this->equipreg_model->lookupBarcodeByBCNo($bc); 
+			$data['Barcode'] = $this->equipreg_model->lookupBarcodeByBCNo($bc); 
 
-			// if is no bc in the system $data['barcode'] will be a string error message 
-			if (is_string($data['barcode'])){
-				$data['UserFeedback'] = $data['barcode'];
+			// if is no bc in the system $data['Barcode'] will be a string error message 
+			if ($data['Barcode']==FALSE){
+				$data['UserFeedback'] = "There is no entry in the system for barcode number " . $bc . ". Please see your system administrator.";
 				$data['ScannerStatus'] = iQS_ScannerStatus_Default;
 				
 			} else {
 				//krumo($data);
 				
 				//this is where I need to do what happens if there is a succesful barcode read that returns data from the database
-				$bc_row=$data['barcode']->row();
+				$bc_row=$data['Barcode']->row();
 				
 				
 				switch(true){
@@ -101,21 +117,12 @@ class Site extends CI_Controller {
 									// the user is trying to return equipment that is signed out so sign it in
 									$q = $this->equipreg_model->signEquipIn($bc_row->ID, $dt);
 									$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " signed in for " . $EqInUse_row->QID . " @ " . $dt;
-
-/* 									
-									//now that the equipment has been signed in for this user we must refresh the user's list of equipment in use
-									$data['EquipInUse'] = $this->equipreg_model->getEquipIDInUse($bc_row->ID); // returns false if there is no equipment signed out for this user
-									if ( ! $data['EquipInUse']==false){ // equipment is in use
-											$EqInUse_row=$data['EquipInUse']->row();								
-									}
-*/									
-										
+									
 								} else {
 									// the item of equipment is not in use so cannot be signed out.
 									// the user is probably trying to sign it out but has forgotten to scan their barcode first 
-									$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is not currently signed out. If you want to use it, scan your barcode first.";
-									
-									
+									$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is not currently signed out to anyone. If you want to use it, scan your barcode first.";
+									$EqInUse_row=FALSE;
 								}
 									
 							// the scanner status is that the member has scanned their bc and is now trying to sign an item of equipment out
@@ -157,10 +164,8 @@ class Site extends CI_Controller {
 											$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is now signed out to " . $WaitingQID;
 										}
 									}
-									
 								}
-								
-								}
+							}
 							// whenever there is an equipment scan we want the member signing that equipment in or out 
 							// to be displayed on screen with a list of any equipment still out standing. 
 							
@@ -168,36 +173,50 @@ class Site extends CI_Controller {
 							$QID=$WaitingQID;
 							
 							//check if there is no waiting QID (i.e. $ScannerStatus == iQS_ScannerStatus_Default)
-							//which means equipment is beeing signed back in
+							//which means equipment is being signed back in
 							if($QID==""){
-								//Assign the QID of the member returning that equipment to the var
-								$QID=$EqInUse_row->QID;
+								//Assign the QID of the member returning that equipment if there is one otherwise 
+								//it means the equipment was not signed out so we $QID = FALSE meaning no barcode 
+								//or equipment in use data will be displayed.
+								$QID = ($EqInUse_row==FALSE) ? FALSE : $QID ;
 							}
 							
-							// change the barcode data of the read barcode equipment to the details of the QID of the waiting member
-							// so when the home page form loads the details of the user are displayed. 
-							$data['barcode'] = $this->equipreg_model->lookupBarcodeByQID($QID);
-							
-							// get an updated list of equipment the user has.
-							$data['EquipInUse'] = $this->equipreg_model->getMemberEquipInUse($QID); // returns false if equipment not in use
-							if ( ! $data['EquipInUse']==false){ // equipment is in use
-									$EqInUse_row=$data['EquipInUse']->row();								
-						} 
+							if ($QID==FALSE) {
+								$data['Barcode'] = FALSE;
+								$data['EquipInUse'] = FALSE;
+								$data['ScannerStatus'] = iQS_ScannerStatus_Default;
+							} else {
+								// change the barcode data of the read barcode equipment to the details of the QID of the waiting member
+								// so when the home page form loads the details of the user are displayed. 
+								
+								$data['Barcode'] = $this->equipreg_model->lookupBarcodeByQID($QID);
+								
+								// get an updated list of equipment the user has.
+								$data['EquipInUse'] = $this->equipreg_model->getMemberEquipInUse($QID); // returns false if equipment not in use
+								if ( ! $data['EquipInUse']==false){ // equipment is in use
+										$EqInUse_row=$data['EquipInUse']->row();								
+								} 								
+							}
 						
-					} else { // The equipment is flagged as permanently OoS
-						$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is flagged as permanently out of service. See your system administrator about this equipment.";	
-					} 
+						} else { // The equipment is flagged as permanently OoS
+							$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is flagged as permanently out of service. See your system administrator about this equipment.";	
+							$data['Barcode'] = FALSE;
+							$data['EquipInUse'] = FALSE;
+						} 
 						break;			
-				}				
-			}
-			
+					}				
+				}
+		}
+		
+		// if the system is now waiting for an equipment scan then set the countdown period
+		$data['StartCDTimer'] = "";
+		if ($data['ScannerStatus'] == iQS_ScannerStatus_EquipmentScan){
+			$data['StartCDTimer'] = iQS_EquipScanCDSecs;
 		}
 		
 		$data['main_content'] = 'home' ;
 		$data['header_title'] = 'Home' ;		 
-		
-		//krumo($data);
-		
+				
 		$this->load->view('includes/template', $data);		
 	}
 		

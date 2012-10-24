@@ -12,7 +12,7 @@ class equipreg_model extends CI_Model {
 		if($q->num_rows()>0) {
 			// do nothing return $q
 		} else {
-			$q='Barcode ' . $barcodeno . ' does not exist in the system!';
+			$q=FALSE;
 		} 
 		return $q;
 	}
@@ -25,7 +25,7 @@ class equipreg_model extends CI_Model {
 		if($q->num_rows()>0) {
 			// do nothing return $q
 		} else {
-			$q='QID ' . $QID. ' does not exist in the system!';
+			$q=FALSE;
 		} 
 		return $q;
 	}
@@ -37,7 +37,7 @@ class equipreg_model extends CI_Model {
 		if($q->num_rows()>0) {
 			// do nothing return $q
 		} else {
-			$q=false; //return false if there is no equip in use for this QID
+			$q=FALSE; //return false if there is no equip in use for this QID
 		} 
 		return $q;
 	}
@@ -54,7 +54,7 @@ class equipreg_model extends CI_Model {
 		if($q->num_rows()>0) {
 			// do nothing return $q
 		} else {
-			$q=false; //return false if this Equip is not in use
+			$q=FALSE; //return false if this Equip is not in use
 		} 
 		return $q;
 	}

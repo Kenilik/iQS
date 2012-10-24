@@ -34,12 +34,12 @@
 	
 	<script type="text/javascript">
 		function setSite() {
-			x=document.getElementById("site_select");			
-			document.cookie='<?php echo iQS_COOKIE_SiteID;?>' + "=" + x.value ;
-			document.cookie='<?php echo iQS_COOKIE_SiteName;?>' + "=" + x.options[x.selectedIndex].text ;
+			x=document.getElementById("site_select");
+			setCookie('<?php echo iQS_COOKIE_SiteID;?>', x.value, 3650, '/', '', '' );	
+			setCookie('<?php echo iQS_COOKIE_SiteName;?>', x.options[x.selectedIndex].text, 3650,'/', '', '' );	
 			location.reload();
 		}
-		
+
 	</script>
 
 </div>

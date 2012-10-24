@@ -4,21 +4,23 @@ class Admin extends CI_Controller {
 	
 	function __construct() {
 		parent::__construct();
-		$this->is_logged_in();
+		$this->__is_logged_in();
 	}
 	
+	function __is_logged_in()	{
+		$is_logged_in = $this->session->userdata('is_logged_in');
+		
+		if(!isset($is_logged_in) || $is_logged_in != TRUE)
+		{
+			echo 'You don\'t have permission to access this page. <a href='.base_url().'index.php/site/home>Login</a>';	
+			die();
+		}		
+	}
+
 	function index(){
 		$data['main_content'] = 'admin/admin' ;
 		$data['header_title'] = "Site Admin" ;
 		$this->load->view('includes/template', $data);		
-	}
-	
-	function equipment_old() {
-		$data['EqItem'] = $this->equipment_model->getAll();
-
-		$data['main_content'] = 'admin/equipment_old' ;
-		$data['header_title'] = "Equipment Admin" ;
-		$this->load->view('includes/template', $data);				
 	}
 		
 	function equipment()
@@ -26,7 +28,8 @@ class Admin extends CI_Controller {
         $crud = new grocery_CRUD();
 		
 		$crud->set_subject('Equipment');
-
+		$crud->set_theme('datatables');
+		
 		$crud->set_table('equipment');
 		
 		$crud->set_relation('EquipTypeID', 'EquipType', 'EquipTypeDescr');
@@ -45,17 +48,14 @@ class Admin extends CI_Controller {
 		
 		$crud->order_by('EquipTypeID, EquipNo', 'ASC');			
 		
-		//$crud->columns('','');
-		
         $output = $crud->render();
- 
+		
  		$data['groceryCRUD_output'] = $output ; 
 		$data['main_content'] = 'admin/equipment' ;
 		$data['header_title'] = "Equipment Admin" ;
 		
-		//krumo($data);
-		
 		$this->load->view('includes/template', $data);				
+						
  	}
 	
 	function members()
@@ -94,16 +94,6 @@ class Admin extends CI_Controller {
 		$this->load->view('includes/template', $data);				
  	}
 
-	function is_logged_in()	{
-		$is_logged_in = $this->session->userdata('is_logged_in');
-		
-		if(!isset($is_logged_in) || $is_logged_in != TRUE)
-		{
-			echo 'You don\'t have permission to access this page. <a href='.base_url().'index.php/site/home>Login</a>';	
-			die();		
-			$this->load->view('site/home');
-		}		
-	}
 	
 	function setsite(){
 		$data['sites'] = $this->district_site_model->getAll();

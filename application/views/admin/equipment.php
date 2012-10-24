@@ -1,33 +1,4 @@
-<?php 
-
-$output = $groceryCRUD_output->output;
-$css_files = $groceryCRUD_output->css_files;
-$js_files = $groceryCRUD_output->js_files;
-
-?>
-
-<?php foreach($css_files as $file): ?>
-	<link type="text/css" rel="stylesheet" href="<?php echo $file; ?>" />
-<?php endforeach; ?>
-
-<?php foreach($js_files as $file): ?>
- 
-    <script src="<?php echo $file; ?>"></script>
-<?php endforeach; ?>
- 
-<style type='text/css'>
-a:hover
-{
-    text-decoration: underline;
-}
-</style>
-
-<script type="text/javascript">
-$(document).ready(function() {
-  $('#quickSearchButton').trigger('click');
-});
-</script>
-
+<?php $output = $groceryCRUD_output->output; ?>
 <div id="container">
 	<h1>Equipment List - CRUD</h1>
 	<div id="body">
@@ -35,11 +6,11 @@ $(document).ready(function() {
 			<a href="admin">Site Admin</a>
 		</p>
 		<p>
-			Maintain Equipment for:
+			Maintain Equipment for: {site}
 		</p>	
-
 		<p>
 			<?php echo $output; ?>
 		</p>
 	</div>
 </div>
+<!--end main_content-->

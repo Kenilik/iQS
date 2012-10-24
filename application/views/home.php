@@ -14,45 +14,43 @@
 			<?php 
 				$attrib = array('name' => 'BCScanner', 'id' =>'BCScanner' );
 				echo form_open('site/home',$attrib);
+				$input_type = 'hidden';
+				 
+				$value = ($ScannerStatus == FALSE) ? iQS_ScannerStatus_Default : $ScannerStatus ;
+				$attrib = array('type'=>$input_type, 'name' => 'ScannerStatus', 'id' =>'ScannerStatus', 'value'=>$value);
+				echo form_input($attrib);
 				
-				$name = "ScannerStatus";					
-				if ($ScannerStatus == FALSE) {
-					$value = iQS_ScannerStatus_Default; 
-				} else {
-					$value = $ScannerStatus;
-				}
-				echo form_input($name,$value);
-							
-				$name = "WaitingQID";
-				if ($WaitingQID == FALSE) {
-					$value = ""; 
-				} else {
-					$value = $WaitingQID;
-				}
-				echo form_input($name, $value);
+				$value = ($WaitingQID == FALSE) ? '' : $WaitingQID ;
+				$attrib = array('type'=>$input_type, 'name' => 'WaitingQID', 'id' =>'WaitingQID', 'value'=>$value);
+				echo form_input($attrib);
+
+				$value = ($StartCDTimer == FALSE) ? '' : $StartCDTimer ;
+				$attrib = array('type'=>$input_type, 'name' => 'StartCDTimer', 'id' =>'StartCDTimer', 'value'=>$value);
+				echo form_input($attrib);
 				
-				echo '<input type="input" name="Barcode" id="Barcode" />';
+				$attrib = array('type'=>$input_type, 'name' => 'Barcode', 'id' =>'Barcode');
+				echo form_input($attrib);
+				
+				echo form_close();
 				
 			?>
-			<br><br>
-			<div id="UserFeedback"><?php echo $UserFeedback;?></div>
+			<br>
+			<h2><div id="UserFeedback"><?php echo $UserFeedback;?></div></h2><span id="CDTimer"></span>	
 			
 			<input type="text" name="UserInput" id="UserInput" onkeypress="keyPressed()">
-			
 		</p>
 		
-		<h1><p id="FeedbackMsg"></p></h1>
 		<?php 
 			// check to see if a barcode was submitted and needs to be displayed
-			if( ! is_null($barcode)) {
-				if( ! $barcode===FALSE){
+			if( ! is_null($Barcode)) {
+				if( ! $Barcode===FALSE){
 					echo '<p>';
-					if(is_string($barcode)){
-						echo $barcode;
+					if(is_string($Barcode)){
+						echo $Barcode;
 					} else {
-						echo $this->table->generate($barcode);
+						echo $this->table->generate($Barcode);
 						
-						$bc_row=$barcode->row();
+						$bc_row=$Barcode->row();
 						
 						switch(true){
 								
@@ -94,12 +92,14 @@
 		var isScanning;
 		
 		$(document).ready(function() {docReady()});
-		
+
+
 
 		/*
 		 * keyPressed is required for browser compatibility as
 		 * the event handling is different between browsers
 		 */
+
 		function keyPressed() {
 			if(window.event) // IE8 and earlier
 			{
@@ -150,8 +150,8 @@
 			case isBCSuffixWithinTime:
 				document.getElementById("Barcode").value = ui;
 				document.getElementById("UserInput").value = "";
-				document.getElementsByName("FeedbackMsg").innerHTML="Successful read for barcode "+myBC;
-				setTimeout(function(){document.getElementById("FeedbackMsg").innerHTML="";},2000);
+				//document.getElementById("UserFeedback").innerHTML="Successful read for barcode "+myBC;
+				//setTimeout(function(){document.getElementById("UserFeedback").innerHTML="";},2000);
 				resetTimer();
 				document.getElementById("BCScanner").submit();
 				
@@ -175,26 +175,31 @@
 			clearTimeout(myVar);
 		}			
 
-		
-		function setCDTimer($secs){
-			$('#timer').countdown(
-				{
-					image: '/iQS/img/digits.png',
-					startTime: '05',
-					timerEnd: function(){ alert('end!'); },
-					format: 'ss'
-				}
-			);
+		function setCDTimer(secs){
+			ex = new Date();
+			ex.AddSeconds(parseInt(secs));
+			
+			$('#CDTimer').countdown({until: ex, format: 'S', expiryUrl: '../site/home'}); 
 		}
-		
+
+						
 		function isNumeric(val) {
-	    if (isNaN(parseFloat(val))) {
-	    	return false;
-	    }
-     		return true;
+			return isNaN(parseFloat(val)) ? false : true;
+			/*
+			if (isNaN(parseFloat(val))) {
+				return false;
+			} else {
+				return true;
+			}
+			*/
 		}
 
 		function docReady(){
+			//start the countdown timer to the value of the STartCDTimer hidden field
+			secs = document.getElementById("StartCDTimer").value;
+			if( ! secs == '') {setCDTimer(secs);}
+			
+			//set the cursor focus to the user input field for the barcode scanner 
 			setBCFocus();
 		}
 
