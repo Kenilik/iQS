@@ -34,10 +34,11 @@
 				echo form_close();
 				
 			?>
-			<br>
-			<h2><div id="UserFeedback"><?php echo $UserFeedback;?></div></h2><span id="CDTimer"></span>	
+			<table>
+			<tr><td><h2><div id="UserFeedback"><?php echo $UserFeedback;?></td><td></h2><span id="CDTimer"></span></td></tr>
 			
-			<input type="text" name="UserInput" id="UserInput" onkeypress="keyPressed()">
+			<tr><td><input type="text" name="UserInput" id="UserInput" onkeydown="keyPressed()"> </div></td></tr>
+			</table>
 		</p>
 		
 		<?php 
@@ -116,6 +117,7 @@
 		}
 
 		function checkKeyPress(kc) {
+			
 			
 			if(kpc==undefined || kpc==0){
 				kpc=1;

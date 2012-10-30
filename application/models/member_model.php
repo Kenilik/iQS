@@ -27,5 +27,34 @@ class Member_model extends CI_Model {
 		} 
 		return $q;
 	}
-	
+
+	function getAllMembers($paramArr) {
+		$start = isset($paramArr['start'])?$paramArr['start']:NULL;
+		$limit = isset($paramArr['limit'])?$paramArr['start']:NULL;
+		$sortField = isset($paramArr['sortField'])?$paramArr['sortField']:'LastName';
+		$sortOrder = isset($paramArr['sortOrder'])?$paramArr['sortOrder']:'asc';
+		$whereParam = isset($paramArr['whereParam'])?$paramArr['whereParam']:NULL;
+		
+		if( ! empty($start) && ! empty($limit)){
+			$optLimit = "limit $start,$limit";
+		} else {
+			$optLimit = NULL;
+		}
+
+		if( ! empty($whereParam)) {
+			$whereParam = "and (".$whereParam.")";
+		}
+		$whereClause = "where true ".$whereParam;
+		
+		$SQL = "SELECT * FROM Member $whereClause order by $sortField $sortOrder $optLimit";
+		
+		$result = $this->db->query($SQL);
+
+		if($result->num_rows() > 0) {
+			$custlist = $result->result();
+			return $custlist;
+		} else {
+			return NULL;
+		}
+	}
 }

@@ -7,7 +7,7 @@ class Admin extends CI_Controller {
 		$this->__is_logged_in();
 	}
 	
-	function __is_logged_in()	{
+	function __is_logged_in() {
 		$is_logged_in = $this->session->userdata('is_logged_in');
 		
 		if(!isset($is_logged_in) || $is_logged_in != TRUE)
@@ -22,7 +22,7 @@ class Admin extends CI_Controller {
 		$data['header_title'] = "Site Admin" ;
 		$this->load->view('includes/template', $data);		
 	}
-		
+	
 	function equipment()
     {
         $crud = new grocery_CRUD();

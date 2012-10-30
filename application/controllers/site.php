@@ -15,6 +15,7 @@ class Site extends CI_Controller {
 			$this->load->view('includes/header');
 			$this->load->view('includes/loginbar');
 			$this->load->view('includes/footer');
+			die();
 		}
 			
 	}
@@ -26,7 +27,6 @@ class Site extends CI_Controller {
 		$data['header_title'] = "Equipment In Use" ;
 		$this->load->view('includes/template', $data);				
 	}
-
 
 	function home() {
 		//assign bc = the value of the posted user input
