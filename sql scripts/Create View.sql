@@ -1,30 +1,66 @@
-SELECT 
-	'Equipment' AS `BarcodeType`,
-	`Equipment`.`EquipID` AS `ID`,
-	`Equipment`.`BarcodeNo` AS `BarcodeNo`,
-	`Equipment`.`SiteID` as `SiteID`,
-	`Equipment`.`EquipTypeID` AS `EquipTypeID`,
-	`EquipType`.`EquipTypeDescr` AS `EquipTypeDescr`,
-	`Equipment`.`EquipStatusID` AS `StatusID`,
-	`EquipStatus`.`EquipStatusDescr` AS `StatusDescr`,
-	NULL as `FirstName`,
-	NULL AS `LastName`
-
-FROM `Equipment`
-	INNER JOIN `EquipType` ON `Equipment`.`EquipTypeID` = `EquipType`.`EquipTypeID`
-	INNER JOIN `EquipStatus` ON `Equipment`.`EquipStatusID` = `EquipStatus`.`EquipStatusID`
-
-UNION SELECT 
-	'Member' AS `BarcodeType`,
-	`Member`.`QID` AS `ID`,
-	`Member`.`BarcodeNo` AS `BarcodeNo`,
-	`Member`.`SiteID` as `SiteID`,
-	NULL AS `EquipTypeID`,
-	NULL AS `EquipTypeDescr`,
-	`Member`.`MemStatusID` AS `StatusID`,
-	`MemStatus`.`MemStatusDescr` AS `StatusDescr`,
-	`Member`.`FirstName`  AS `FirstName`,
-	`Member`.`LastName`  AS `LastName`
-
-FROM `Member`
-	INNER JOIN `MemStatus` `MemStatus` ON `Member`.`MemStatusID` = `MemStatus`.`MemStatusID`
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `qallbarcodeinfo` AS
+    select 
+        'Equipment' AS `BarcodeType`,
+        `equipment`.`ID` AS `ID`,
+        `equipment`.`Name` AS `Name`,
+        `equipment`.`BarcodeNo` AS `BarcodeNo`,
+        `equipment`.`HomeSiteID` AS `SiteID`,
+        `equipment`.`EquipTypeID` AS `EquipTypeID`,
+        `equiptype`.`Name` AS `EquipTypeName`,
+        `equipment`.`EquipStatusID` AS `StatusID`,
+        `equipstatus`.`Status` AS `Status`,
+        NULL AS `FirstName`,
+        NULL AS `LastName`
+    from
+        ((`equipment`
+        join `equiptype` ON ((`equipment`.`EquipTypeID` = `equiptype`.`ID`)))
+        join `equipstatus` ON ((`equipment`.`EquipStatusID` = `equipstatus`.`ID`))) 
+    union select 
+        'User' AS `BarcodeType`,
+        `user`.`ID` AS `ID`,
+        `user`.`Username` AS `Name`,
+        `user`.`BarcodeNo` AS `BarcodeNo`,
+        `user`.`HomeSiteID` AS `HomeSiteID`,
+        NULL AS `EquipTypeID`,
+        NULL AS `EquipTypeName`,
+        `user`.`UserStatusID` AS `StatusID`,
+        `userstatus`.`Status` AS `Status`,
+        `user`.`FirstName` AS `FirstName`,
+        `user`.`LastName` AS `LastName`
+    from
+        (`user`
+        join `userstatus` ON ((`user`.`UserStatusID` = `userstatus`.`ID`)))
+        
+        
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `qequipinuse` AS
+    select 
+        `equipregister`.`ID` AS `EquipRegID`,
+        `equipment`.`ID` AS `EquipID`,
+        `equiptype`.`ID` AS `EquipTypeID`,
+        `equipregister`.`UserID` AS `UserID`,
+        `equiptype`.`Name` AS `EquipTypeName`,
+        `equipment`.`Name` AS `EquipName`,
+        `equipment`.`BarcodeNo` AS `BarcodeNo`,
+        `user`.`Username` AS `Username`,
+        `user`.`FirstName` AS `FirstName`,
+        `user`.`LastName` AS `LastName`,
+        `equipregister`.`DTOut` AS `DTOut`,
+        sec_to_time(timestampdiff(SECOND,
+                    `equipregister`.`DTOut`,
+                    now())) AS `TimeInUse`
+    from
+        ((`equiptype`
+        join `equipment` ON ((`equiptype`.`ID` = `equipment`.`EquipTypeID`)))
+        join (`user`
+        join `equipregister` ON ((`user`.`ID` = `equipregister`.`UserID`))) ON ((`equipment`.`ID` = `equipregister`.`EquipID`)))
+    where
+        isnull(`equipregister`.`DTIn`)
+    order by `equiptype`.`ID`

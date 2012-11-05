@@ -4,45 +4,39 @@
 
 class equipreg_model extends CI_Model {
 	
-	function lookupBarcodeByBCNo($barcodeno) { // returns single row with barcode lookup result
+	function lookupBarcode($barcodeno) { // returns single row with barcode lookup result
 		
 		$sql = "SELECT * FROM qAllBarcodeInfo WHERE BarcodeNo = ?" ;
 		$q = $this->db->query($sql, array($barcodeno)) ;
 				
-		if($q->num_rows()>0) {
-			// do nothing return $q
-		} else {
+		if( ! $q->num_rows()>0) {
 			$q=FALSE;
 		} 
 		return $q;
 	}
 	
-	function lookupBarcodeByQID($QID) { // returns single row with barcode lookup result
+	function lookupBarcodeByUser($UserID) { // returns single row with barcode lookup result
 		
-		$sql = "SELECT * FROM qAllBarcodeInfo WHERE ID = ?" ;
-		$q = $this->db->query($sql, array($QID)) ;
+		$sql = "SELECT * FROM qAllBarcodeInfo WHERE BarcodeType = 'User' AND ID = ?" ;
+		$q = $this->db->query($sql, array($UserID)) ;
 				
-		if($q->num_rows()>0) {
-			// do nothing return $q
-		} else {
+		if( ! $q->num_rows()>0) {
 			$q=FALSE;
 		} 
 		return $q;
 	}
 
-	function getMemberEquipInUse($QID) { // returns a query result of the equipment currently in use for a given QID
-		$sql = "SELECT * FROM qEquipInUse WHERE QID = ?" ;
-		$q = $this->db->query($sql, array($QID)) ;
+	function getEquipInUseByUser($UserID) { // returns a query result of the equipment currently in use for a given User
+		$sql = "SELECT * FROM qEquipInUse WHERE UserID = ?" ;
+		$q = $this->db->query($sql, array($UserID)) ;
 				
-		if($q->num_rows()>0) {
-			// do nothing return $q
-		} else {
+		if( ! $q->num_rows()>0) {
 			$q=FALSE; //return false if there is no equip in use for this QID
 		} 
 		return $q;
 	}
 	
-	function getEquipIDInUse($EquipID = FALSE) { // returns a query result of the equipment currently in use for a given QID
+	function getEquipIDInUse($EquipID = FALSE) { // returns a query result of the equipment currently in use for a given item of equipment or all equipment
 		if ($EquipID == FALSE) {
 			$sql = "SELECT * FROM qEquipInUse" ;
 			$q = $this->db->query($sql) ;			
@@ -51,9 +45,7 @@ class equipreg_model extends CI_Model {
 			$q = $this->db->query($sql, array($EquipID)) ;			
 		}
 		
-		if($q->num_rows()>0) {
-			// do nothing return $q
-		} else {
+		if( ! $q->num_rows()>0) {
 			$q=FALSE; //return false if this Equip is not in use
 		} 
 		return $q;
@@ -68,10 +60,10 @@ class equipreg_model extends CI_Model {
 		return $q;
 	}
 	
-	function signEquipOut($QID, $EquipID, $dt){
+	function signEquipOut($UserID, $EquipID, $dt){
 		$data = array(
-			'QID'=> $QID,
-			'EquipID' => $EquipID, 
+			'UserID'=> $UserID,
+			'EquipID' => $EquipID,
 			'DTOut' => $dt
 			);
 		$q = $this->db->insert('EquipRegister',$data);

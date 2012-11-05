@@ -20,8 +20,8 @@
 				$attrib = array('type'=>$input_type, 'name' => 'ScannerStatus', 'id' =>'ScannerStatus', 'value'=>$value);
 				echo form_input($attrib);
 				
-				$value = ($WaitingQID == FALSE) ? '' : $WaitingQID ;
-				$attrib = array('type'=>$input_type, 'name' => 'WaitingQID', 'id' =>'WaitingQID', 'value'=>$value);
+				$value = ($WaitingUserID == FALSE) ? '' : $WaitingUserID ;
+				$attrib = array('type'=>$input_type, 'name' => 'WaitingUserID', 'id' =>'WaitingUserID', 'value'=>$value);
 				echo form_input($attrib);
 
 				$value = ($StartCDTimer == FALSE) ? '' : $StartCDTimer ;
@@ -55,9 +55,10 @@
 						
 						switch(true){
 								
-							case $bc_row->BarcodeType=="Member":								
+							case $bc_row->BarcodeType=="User":
 								if ($bc_row->StatusID==0) { // if the member status is active
 									if ( ! $EquipInUse==false) {
+										
 										echo $this->table->generate($EquipInUse);
 									} else {
 										echo "No equipment currently signed out.";
@@ -116,9 +117,7 @@
 			}
 		}
 
-		function checkKeyPress(kc) {
-			
-			
+		function checkKeyPress(kc) {		
 			if(kpc==undefined || kpc==0){
 				kpc=1;
 			} else {

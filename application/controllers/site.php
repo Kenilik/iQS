@@ -50,16 +50,15 @@ class Site extends CI_Controller {
 		}
 		
 		
-		$WaitingQID = $this->input->post('WaitingQID');
-		if ($WaitingQID===FALSE) {
-			$data['WaitingQID']=FALSE;
+		$WaitingUserID = $this->input->post('WaitingUserID');
+		if ($WaitingUserID===FALSE) {
+			$data['WaitingUserID']=FALSE;
 		} else {
-			$data['WaitingQID']= $WaitingQID;
+			$data['WaitingUserID']= $WaitingUserID;
 		}
 
-		
-		$dt = date(iQS_MySQLDateFormat);
-		
+		// get current UTC date
+		$dt = gmdate(iQS_MySQLDateFormat);
 		
 		//check if a barcode has been scanned in (if not the page is loading for the first time without a submit) 	
 		if ($bc === FALSE) {
@@ -71,7 +70,7 @@ class Site extends CI_Controller {
 			 */
 			
 			//returns db query results or error message
-			$data['Barcode'] = $this->equipreg_model->lookupBarcodeByBCNo($bc); 
+			$data['Barcode'] = $this->equipreg_model->lookupBarcode($bc); 
 
 			// if is no bc in the system $data['Barcode'] will be a string error message 
 			if ($data['Barcode']==FALSE){
@@ -86,16 +85,16 @@ class Site extends CI_Controller {
 				
 				
 				switch(true){
-					case $bc_row->BarcodeType=="Member":
-						// if the member status is active
+					case $bc_row->BarcodeType=="User":
+						// if the user status is active
 						if ($bc_row->StatusID==0) {
 							// get their list of equip in use 
-							$data['EquipInUse'] = $this->equipreg_model->getMemberEquipInUse($bc_row->ID); 
+							$data['EquipInUse'] = $this->equipreg_model->getEquipInUseByUser($bc_row->ID); 
 							$data['UserFeedback'] = "Scan your equipment...";
-							$data['WaitingQID'] = $bc_row->ID;							
+							$data['WaitingUserID'] = $bc_row->ID;							
 							$data['ScannerStatus'] = iQS_ScannerStatus_EquipmentScan;
 						} else {
-							$data['UserFeedback'] = $bc_row->ID . " is not an active staff member.";
+							$data['UserFeedback'] = $bc_row->ID . " is not an active staff user.";
 							$data['ScannerStatus'] = iQS_ScannerStatus_Default;
 						}
 						break;
@@ -116,20 +115,20 @@ class Site extends CI_Controller {
 								if ( ! $data['EquipInUse']==false) {
 									// the user is trying to return equipment that is signed out so sign it in
 									$q = $this->equipreg_model->signEquipIn($bc_row->ID, $dt);
-									$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " signed in for " . $EqInUse_row->QID . " @ " . $dt;
+									$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " signed in for " . $EqInUse_row->Username . " @ " . $dt;
 									
 								} else {
 									// the item of equipment is not in use so cannot be signed out.
 									// the user is probably trying to sign it out but has forgotten to scan their barcode first 
-									$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is not currently signed out to anyone. If you want to use it, scan your barcode first.";
+									$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " is not currently signed out to anyone. If you want to use it, scan your barcode first.";
 									$EqInUse_row=FALSE;
 								}
 									
-							// the scanner status is that the member has scanned their bc and is now trying to sign an item of equipment out
+							// the scanner status is that the user has scanned their bc and is now trying to sign an item of equipment out
 							// $ScannerStatus = iQS_ScannerStatus_EquipmentScan
 							} else {	
-								// get details of the waiting staff member
-								$waitingMember_row = $this->member_model->getMember($WaitingQID)->row();
+								// get details of the waiting staff user
+								$waitingUser_row = $this->user_model->getUser($WaitingUserID)->row();
 								
 								// if the equipment is Temp OoS
 								if ($bc_row->StatusID==1) {
@@ -142,64 +141,63 @@ class Site extends CI_Controller {
 									 */
 									
 									//sign out
-									$q = $this->equipreg_model->signEquipOut($waitingMember_row->QID, $bc_row->ID, $dt);
-									$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is now signed out to " . $WaitingQID;
+									$q = $this->equipreg_model->signEquipOut($waitingUser_row->ID, $bc_row->ID, $dt);
+									$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " is now signed out to " . $waitingUser_row->Username;
 									
 								// the equipment is in service
 								} else {
-									
 									if ($data['EquipInUse']==false) {
-										$q = $this->equipreg_model->signEquipOut($waitingMember_row->QID, $bc_row->ID, $dt);
-										$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is now signed out to " . $WaitingQID;
+										$q = $this->equipreg_model->signEquipOut($waitingUser_row->ID, $bc_row->ID, $dt);
+										$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " is now signed out to " . $waitingUser_row->Username;
 									} else {
-										if ($waitingMember_row->QID == $EqInUse_row->QID) {
+										if ($waitingUser_row->ID == $EqInUse_row->UserID) {
 											//signin
 											$q = $this->equipreg_model->signEquipIn($bc_row->ID, $dt);
-											$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " signed in for " . $EqInUse_row->QID . " @ " . $dt;
+											$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " signed in for " . $EqInUse_row->Username . " @ " . $dt;
 										} else {
 											//signin
 											$q = $this->equipreg_model->signEquipIn($bc_row->ID, $dt);
 											//signout
-											$q = $this->equipreg_model->signEquipOut($waitingMember_row->QID, $bc_row->ID, $dt);
-											$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is now signed out to " . $WaitingQID;
+											$q = $this->equipreg_model->signEquipOut($waitingUser_row->ID, $bc_row->ID, $dt);
+											$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " is now signed out to " . $waitingUser_row->Username;
 										}
 									}
 								}
 							}
-							// whenever there is an equipment scan we want the member signing that equipment in or out 
+							// whenever there is an equipment scan we want the User signing that equipment in or out 
 							// to be displayed on screen with a list of any equipment still out standing. 
 							
-							// Assign the waiting QID to a var
-							$QID=$WaitingQID;
+							// Assign the waiting UserID to a var
+							$UserID=$WaitingUserID;
 							
-							//check if there is no waiting QID (i.e. $ScannerStatus == iQS_ScannerStatus_Default)
+							//check if there is no waiting UserID (i.e. $ScannerStatus == iQS_ScannerStatus_Default)
 							//which means equipment is being signed back in
-							if($QID==""){
-								//Assign the QID of the member returning that equipment if there is one otherwise 
-								//it means the equipment was not signed out so we $QID = FALSE meaning no barcode 
+							if($UserID==""){
+								//Assign the UserID of the User returning that equipment if there is one otherwise 
+								//it means the equipment was not signed out so $UserID = FALSE meaning no barcode 
 								//or equipment in use data will be displayed.
-								$QID = ($EqInUse_row==FALSE) ? FALSE : $QID ;
+								$UserID = ($EqInUse_row==FALSE) ? FALSE : $UserID ;
 							}
 							
-							if ($QID==FALSE) {
+							if ($UserID==FALSE) {
 								$data['Barcode'] = FALSE;
 								$data['EquipInUse'] = FALSE;
 								$data['ScannerStatus'] = iQS_ScannerStatus_Default;
 							} else {
-								// change the barcode data of the read barcode equipment to the details of the QID of the waiting member
+								// change the barcode data of the read barcode equipment to the details of the UserID of the waiting User
 								// so when the home page form loads the details of the user are displayed. 
 								
-								$data['Barcode'] = $this->equipreg_model->lookupBarcodeByQID($QID);
+								$data['Barcode'] = $this->equipreg_model->lookupBarcodeByUser($UserID);
 								
 								// get an updated list of equipment the user has.
-								$data['EquipInUse'] = $this->equipreg_model->getMemberEquipInUse($QID); // returns false if equipment not in use
+								$data['EquipInUse'] = $this->equipreg_model->getEquipInUseByUser($UserID); 	// returns false if equipment not in use
 								if ( ! $data['EquipInUse']==false){ // equipment is in use
 										$EqInUse_row=$data['EquipInUse']->row();								
-								} 								
+								} 
 							}
 						
 						} else { // The equipment is flagged as permanently OoS
-							$data['UserFeedback'] = $bc_row->EquipTypeDescr . " " . $bc_row->EquipNo . " is flagged as permanently out of service. See your system administrator about this equipment.";	
+							$data['UserFeedback'] = $bc_row->EquipTypeName . " " . $bc_row->EquipName . " is flagged as permanently out of service. See your system administrator about this equipment.";	
 							$data['Barcode'] = FALSE;
 							$data['EquipInUse'] = FALSE;
 						} 

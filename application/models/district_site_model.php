@@ -2,7 +2,7 @@
 class district_site_model extends CI_Model {
 	
 	function getAll(){
-		$sql = "SELECT district.districtid, district.districtname, site.siteid, site.sitename FROM site INNER JOIN district WHERE site.districtid=district.districtid" ; 
+		$sql = "SELECT district.id as DistrictID, district.name AS DistrictName, site.id AS SiteID, site.name AS SiteName FROM site INNER JOIN district WHERE site.districtid=district.id" ; 
 		$query = $this->db->query($sql) ;
 		
 		if ($query->num_rows()>0) {

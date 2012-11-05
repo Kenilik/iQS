@@ -1,34 +1,30 @@
 <?php
 
-class Member_model extends CI_Model {
+class User_model extends CI_Model {
 
 	function validate()
 	{
-		$this->db->where('qid', $this->input->post('qid'));
+		$this->db->where('username', $this->input->post('username'));
 		$this->db->where('password', $this->input->post('password'));
-		$this->db->where('isAdmin',true);
-		$query = $this->db->get('member');
+		$query = $this->db->get('user');
 		
-		if($query->num_rows == 1)
-		{
-			return true;
+		if($query->num_rows == 1){
+			return TRUE;
 		}
 		
 	}
 	
-	function getMember($QID){
-		$sql = "SELECT * FROM Member WHERE QID = ?" ;
-		$q = $this->db->query($sql, array($QID)) ;
+	function getUser($UserID){
+		$sql = "SELECT * FROM user WHERE ID = ?" ;
+		$q = $this->db->query($sql, array($UserID)) ;
 				
-		if($q->num_rows()>0) {
-			// do nothing return $q
-		} else {
-			$q=false; //return false if there is no Member by this QID
+		if( ! $q->num_rows()>0) {
+			$q=FALSE; //return false if there is no User by this UserID
 		} 
 		return $q;
 	}
 
-	function getAllMembers($paramArr) {
+	function getAllUsers($paramArr) {
 		$start = isset($paramArr['start'])?$paramArr['start']:NULL;
 		$limit = isset($paramArr['limit'])?$paramArr['start']:NULL;
 		$sortField = isset($paramArr['sortField'])?$paramArr['sortField']:'LastName';
@@ -46,7 +42,7 @@ class Member_model extends CI_Model {
 		}
 		$whereClause = "where true ".$whereParam;
 		
-		$SQL = "SELECT * FROM Member $whereClause order by $sortField $sortOrder $optLimit";
+		$SQL = "SELECT * FROM user $whereClause order by $sortField $sortOrder $optLimit";
 		
 		$result = $this->db->query($SQL);
 
@@ -54,7 +50,7 @@ class Member_model extends CI_Model {
 			$custlist = $result->result();
 			return $custlist;
 		} else {
-			return NULL;
+			return FALSE;
 		}
 	}
 }

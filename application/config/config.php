@@ -244,12 +244,12 @@ $config['encryption_key'] = 'c%ndqqTJ-z_|YFG2ccU2bM6(8r*46!)7';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'iqs_session';
+$config['sess_cookie_name']		= 'iqs';
 $config['sess_expiration']		= 3000;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= TRUE;
-$config['sess_use_database']	= FALSE;
-$config['sess_table_name']		= 'iqs_sessions';
+$config['sess_use_database']	= TRUE;
+$config['sess_table_name']		= 'iqssession';
 $config['sess_match_ip']		= FALSE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;

@@ -52,7 +52,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('database', 'table', 'session', 'grocery_CRUD');
+$autoload['libraries'] = array('database', 'table', 'session', 'email','grocery_CRUD', 'ion_auth', 'form_validation', 'email');
 
 
 /*
@@ -109,7 +109,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array('equipment_model', 'equipreg_model', 'district_site_model', 'member_model');
+$autoload['model'] = array('equipment_model', 'equipreg_model', 'district_site_model', 'user_model');
 
 
 /* End of file autoload.php */
