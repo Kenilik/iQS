@@ -186,7 +186,6 @@ class Site extends CI_Controller {
 							} else {
 								// change the barcode data of the read barcode equipment to the details of the UserID of the waiting User
 								// so when the home page form loads the details of the user are displayed. 
-								
 								$data['Barcode'] = $this->equipreg_model->lookupBarcodeByUser($UserID);
 								
 								// get an updated list of equipment the user has.

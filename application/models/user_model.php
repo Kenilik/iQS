@@ -47,8 +47,8 @@ class User_model extends CI_Model {
 		$result = $this->db->query($SQL);
 
 		if($result->num_rows() > 0) {
-			$custlist = $result->result();
-			return $custlist;
+			$userlist = $result->result();
+			return $userlist;
 		} else {
 			return FALSE;
 		}

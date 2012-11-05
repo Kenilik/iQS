@@ -36,7 +36,7 @@ class equipreg_model extends CI_Model {
 		return $q;
 	}
 	
-	function getEquipIDInUse($EquipID = FALSE) { // returns a query result of the equipment currently in use for a given item of equipment or all equipment
+	function getEquipIDInUse($EquipID = FALSE) { // returns a query result of the equipment currently in use for a given item of equipment or for all equipment
 		if ($EquipID == FALSE) {
 			$sql = "SELECT * FROM qEquipInUse" ;
 			$q = $this->db->query($sql) ;			
