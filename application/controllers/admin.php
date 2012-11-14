@@ -96,7 +96,7 @@ class Admin extends CI_Controller {
 
 	
 	function setsite(){
-		$data['sites'] = $this->district_site_model->getAll();
+		$data['sites'] = $this->Site_Group_model->get();
 		
 		$data['main_content'] = 'admin/setsite' ;
 		$data['header_title'] = "Set Site" ;

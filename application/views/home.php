@@ -44,7 +44,7 @@
 		<?php 
 			// check to see if a barcode was submitted and needs to be displayed
 			if( ! is_null($Barcode)) {
-				if( ! $Barcode===FALSE){
+				if( ! $Barcode==FALSE){
 					echo '<p>';
 					if(is_string($Barcode)){
 						echo $Barcode;
@@ -53,12 +53,10 @@
 						
 						$bc_row=$Barcode->row();
 						
-						switch(true){
-								
-							case $bc_row->BarcodeType=="User":
-								if ($bc_row->StatusID==0) { // if the member status is active
+						switch(true){	
+							case $bc_row->barcode_type=="user":
+								if ($bc_row->status_id==0) { // if the member status is active
 									if ( ! $EquipInUse==false) {
-										
 										echo $this->table->generate($EquipInUse);
 									} else {
 										echo "No equipment currently signed out.";
@@ -69,7 +67,7 @@
 									
 								break;
 								
-							case $bc_row->BarcodeType=="Equipment":
+							case $bc_row->barcode_type=="equip_item":
 									
 								break;
 											
