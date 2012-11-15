@@ -27,13 +27,14 @@ class User_model extends CI_Model {
 		return $q;
 	}
 	
-	function set_password($user_id, $plaintext)
+	function set_password($username, $plaintext)
 	{
-		$this->hashedpassword = $this->hash_password($plaintext);
-		//$this->db->update
+		//$this->hashedpassword = $this->hash_password($plaintext);
+		$this->db->where('id', $username);
+		$this->db->update('users', array('hashed_password' => $this->hash_password($plaintext)));
 	}
 	
-	function hash_password($password)
+	private function hash_password($password)
 	{
 		$salt = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
 		$hash = hash('sha256', $salt . $password);
@@ -41,37 +42,48 @@ class User_model extends CI_Model {
 		return $salt . $hash;
 	}
 	
-	function validate_password($password)
+	private function validate_password($hashed_password, $password)
 	{
-		$salt = substr($this->hashedpassword, 0, 64);
-		$hash = substr($this->hashedpassword, 64, 64);		
+		$salt = substr($hashed_password, 0, 64);
+		$hash = substr($hashed_password, 64, 64);		
 		
 		$password_hash = hash('sha256', $salt . $password);
 		
 		return $password_hash == $hash;
 	}
 	
-	public static function validate_login($username, $password)
+	public function validate_login($username, $password)
 	{
-		$user = User::find_by_username($username);
+		$this->db->select('username, first_name, last_name, hashed_password');
+		$user = $this->db->get_where('users', array('username' => $username))->row();
 		
-		if ($user && $user->validate_password($password)) {
-			User::login($user->id);
-			return $user;
+		if ($user && $this->validate_password($user->hashed_password,$password)) {
+			$this->login($user);
+			return $username;
 		} else {			 
 			return FALSE;
 		}
-		
 	}
 	
-	public static function login($username)
+	private function login($user)
 	{
-		$user = User::find_by_username($username);
 		$newdata = array(
+			'is_logged_in' => 1,
 			'iqs_username' => $user->username,
-			'iqs_firstname' => $user->firstname,
-			'iqs_lastname' => $user->firstname);
-			//don't foget to also deal with user role
+			'iqs_firstname' => $user->first_name,
+			'iqs_lastname' => $user->last_name);
+			//don't forget to also deal with user role
+			
+		$this->session->set_userdata($newdata);
+	}
+	private function logout()
+	{
+		$newdata = array(
+			'is_logged_in' => 0,
+			'iqs_username' => '',
+			'iqs_firstname' => '',
+			'iqs_lastname' => '');
+			
 		$this->session->set_userdata($newdata);
 	}
 }

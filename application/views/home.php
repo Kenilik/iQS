@@ -13,7 +13,7 @@
 		<p>
 			<?php 
 				$attrib = array('name' => 'BCScanner', 'id' =>'BCScanner' );
-				echo form_open('site/home',$attrib);
+				echo form_open('main/home',$attrib);
 				$input_type = 'hidden';
 				 
 				$value = ($ScannerStatus == FALSE) ? iQS_ScannerStatus_Default : $ScannerStatus ;
