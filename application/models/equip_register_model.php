@@ -23,7 +23,7 @@ class Equip_Register_model extends CI_Model {
 	}
 	
 	// returns a query result of the equipment currently in use for a given User
-	function getEquipInUseByUser($user_id) 
+	function getEquipInUseByUser($user_id)
 	{ 		
 		$q = $this->db->get_where('v_equip_in_use', array('user_id' => $user_id));
 		if( ! $q->num_rows()>0) {
@@ -33,7 +33,7 @@ class Equip_Register_model extends CI_Model {
 	}
 	
 	// returns a query result of the equipment currently in use for a given item of equipment or for all equipment
-	function getEquipIDInUse($equip_item_id = FALSE)  
+	function getEquipIDInUse($equip_item_id = FALSE)
 	{ 
 		if ($equip_item_id == FALSE) {
 			$q = $this->db->get('v_equip_in_use') ;			

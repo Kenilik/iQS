@@ -5,15 +5,15 @@
 		<p>
 			<a href="../site/equipinuse">Equipment Signed Out</a>
 			<?php 
-			if($this->session->userdata('is_logged_in') === TRUE){
-				echo '<a href="../admin">Site Administration</a>' ; 
-			}	
-			?>		
+				if($this->session->userdata('is_logged_in') === TRUE){
+					echo '<a href="../admin">Site Administration</a>' ; 
+				}
+			?>
 		</p>
 		<p>
 			<?php 
 				$attrib = array('name' => 'BCScanner', 'id' =>'BCScanner' );
-				echo form_open('main/home',$attrib);
+				echo form_open('main/scanner',$attrib);
 				$input_type = 'hidden';
 				 
 				$value = ($ScannerStatus == FALSE) ? iQS_ScannerStatus_Default : $ScannerStatus ;
@@ -36,7 +36,6 @@
 			?>
 			<table>
 			<tr><td><h2><div id="UserFeedback"><?php echo $UserFeedback;?></td><td></h2><span id="CDTimer"></span></td></tr>
-			
 			<tr><td><input type="text" name="UserInput" id="UserInput" onkeydown="keyPressed()"> </div></td></tr>
 			</table>
 		</p>
@@ -93,8 +92,6 @@
 		
 		$(document).ready(function() {docReady()});
 
-
-
 		/*
 		 * keyPressed is required for browser compatibility as
 		 * the event handling is different between browsers
@@ -131,9 +128,13 @@
 			isBCSuffixWithinTime=((kpc==8 || kpc==6) && kc.charCodeAt(0)==13);
 		
 			kpc_result = true;
-		
+			
 			switch(true)
 			{
+			case kc==' ':
+				location.reload();
+				break;
+				
 			case isSubsNumberWithinTime:
 			//do nothing wait for next key
 				ui=ui+kc;
@@ -155,7 +156,7 @@
 				document.getElementById("BCScanner").submit();
 				
 				break;
-				
+			
 			default:
 				resetTimer();
 				kpc_result = false;
@@ -178,7 +179,7 @@
 			ex = new Date();
 			ex.AddSeconds(parseInt(secs));
 			
-			$('#CDTimer').countdown({until: ex, format: 'S', expiryUrl: '../site/home'}); 
+			$('#CDTimer').countdown({until: ex, format: 'S', expiryUrl: '../main/scanner'}); 
 		}
 
 						

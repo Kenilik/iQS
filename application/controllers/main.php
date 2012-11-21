@@ -28,7 +28,7 @@ class Main extends CI_Controller {
 		$this->load->view('includes/template', $data);				
 	}
 
-	function home() 
+	function scanner() 
 	{
 		//assign bc = the value of the posted user input
 		//this value will be false if the form is being 
@@ -99,9 +99,10 @@ class Main extends CI_Controller {
 						
 					case $bc_row->barcode_type=="equip_item":
 						$data['EquipInUse'] = $this->Equip_Register_model->getEquipIDInUse($bc_row->id); // returns false if equipment not signed out
+						
 						// if the equipment is signed out see who has it signed out
 						if ( ! $data['EquipInUse']==false){
-							$EqInUse_row=$data['EquipInUse']->row();								
+							$EqInUse_row=$data['EquipInUse']->row();							 							
 						}
 						
 						// if the equipment is in service or tempOoS
@@ -208,8 +209,8 @@ class Main extends CI_Controller {
 			$data['StartCDTimer'] = iQS_EquipScanCDSecs;
 		}
 		
-		$data['main_content'] = 'home' ;
-		$data['header_title'] = 'Home' ;		 
+		$data['main_content'] = 'scanner' ;
+		$data['header_title'] = 'iQuickScan Scanner' ;		 
 				
 		$this->load->view('includes/template', $data);		
 	}
