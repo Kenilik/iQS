@@ -2,17 +2,22 @@
 
 class Auth extends CI_Controller {
 
-	public function validate_login($username, $password)
+	function validate_login()
 	{
+		$username = $this->input->post('username');
+		$password =$this->input->post('password');
+		
 		$this->db->select('username, first_name, last_name, hashed_password');
 		$user = $this->db->get_where('users', array('username' => $username))->row();
 		
 		if ($user && $this->validate_password($user->hashed_password,$password)) {
 			$this->login($user);
-			return $username;
-		} else {			 
-			return FALSE;
+		} else {
+			$this->session->set_flashdata(
+				'error',
+				'Your login attempt failed.');
 		}
+		redirect('main/scanner');
 	}
 	
 	private function validate_password($hashed_password, $password)
@@ -36,7 +41,8 @@ class Auth extends CI_Controller {
 			
 		$this->session->set_userdata($newdata);
 	}
-	private function logout()
+	
+	function logout()
 	{
 		$newdata = array(
 			'is_logged_in' => FALSE,
@@ -45,5 +51,6 @@ class Auth extends CI_Controller {
 			'iqs_lastname' => '');
 			
 		$this->session->set_userdata($newdata);
+		redirect('main/scanner');
 	}
 }

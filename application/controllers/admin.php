@@ -4,15 +4,15 @@ class Admin extends CI_Controller {
 	
 	function __construct() {
 		parent::__construct();
-		$this->__is_logged_in();
+		//$this->__is_logged_in();
 	}
 	
 	function __is_logged_in() {
 		$is_logged_in = $this->session->userdata('is_logged_in');
 		
-		if(!isset($is_logged_in) || $is_logged_in != TRUE)
+		if( ! isset($is_logged_in) || $is_logged_in != TRUE)
 		{
-			echo 'You don\'t have permission to access this page. <a href='.base_url().'index.php/site/home>Login</a>';	
+			echo 'You don\'t have permission to access this page. <a href='.base_url().'index.php/main/scanner>Login</a>';	
 			die();
 		}		
 	}
@@ -98,8 +98,8 @@ class Admin extends CI_Controller {
 	function setsite(){
 		$data['sites'] = $this->Site_Group_model->get();
 		
-		$data['main_content'] = 'admin/setsite' ;
-		$data['header_title'] = "Set Site" ;
+		$data['main_content'] = 'admin/setsite';
+		$data['header_title'] = "Set Site";
 		$this->load->view('includes/template', $data);		
 	}
 	

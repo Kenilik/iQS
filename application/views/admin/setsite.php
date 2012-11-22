@@ -13,20 +13,17 @@
 			Choose the site for which equipment will be signed in and out from this location:
 		
 		<?php 
-			
-			// the controller will return error string if no sites set up - which should never happen
-			
-			if(is_string($sites)){
-				echo $sites;
-			} else {
+			// the controller will return false if no sites set up - which should never happen
+			if(! $sites == FALSE){
 				echo '<select id="site_select" onclick()>';
-				foreach ($sites as $site) {
-					echo '<option value=' . $site->siteid . '>'. $site->sitename.'</option>'; 
+				foreach ($sites->result() as $site) {
+					echo '<option value=' . $site->site_id . '>'. $site->site_group_name . ' - ' . $site->site_name.'</option>'; 
 				}
 				echo '</select>';
 				echo '<button type="button" onclick="setSite()">Set Site</button>';
+			} else {
+				echo 'There are no sites set up.';
 			}
-			
 		?>
 		</p>
 		

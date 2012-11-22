@@ -36,7 +36,7 @@ class Main extends CI_Controller {
 		$bc = $this->input->post('Barcode');
 		
 		
-		$ScannerStatus = $this->input->post('ScannerStatus');		
+		$ScannerStatus = $this->input->post('ScannerStatus');
 		if ($ScannerStatus===FALSE) {
 			$data['ScannerStatus']=iQS_ScannerStatus_Default;
 		} else {
