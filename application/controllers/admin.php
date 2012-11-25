@@ -27,26 +27,42 @@ class Admin extends CI_Controller {
     {
         $crud = new grocery_CRUD();
 		
+		$site_id = get_cookie(iQS_COOKIE_SiteID);
+		
 		$crud->set_subject('Equipment');
 		$crud->set_theme('datatables');
 		
-		$crud->set_table('equipment');
+		$crud->set_table('equip_items');
 		
-		$crud->set_relation('EquipTypeID', 'EquipType', 'EquipTypeDescr');
-		$crud->set_relation('EquipStatusID', 'EquipStatus','EquipStatusDescr');
-		$crud->set_relation('SiteID', 'site', 'sitename');
-
-		$crud->where('equipment.siteid', get_cookie(iQS_COOKIE_SiteID));
-		$crud->where('Equipment.EquipStatusID', iQS_EqStatus_InUse);
-		$crud->or_where('Equipment.EquipStatusID',iQS_EqStatus_TempOoS);
-
-		$crud->display_as('EquipStatusID','Status');
-		$crud->display_as('EquipTypeID','Type');
-		$crud->display_as('SiteID','Site');
-		$crud->display_as('EquipNo', 'Equipment Number');
-		$crud->display_as('BarcodeNo', 'Barcode');						
+		$crud->columns('equip_type_id', 'name', 'barcode_no');
 		
-		$crud->order_by('EquipTypeID, EquipNo', 'ASC');			
+		$crud->set_relation('equip_type_id', 'equip_types', 'name');
+		$crud->set_relation('equip_status_id', 'equip_status','status');
+		$crud->where('equip_items.site_id', $site_id);
+		$crud->where('equip_items.equip_status_id !=', iQS_EqStatus_PermOoS);
+		
+		$crud->add_fields('equip_status_id', 'site_id', 'equip_type_id', 'name', 'barcode_no');
+		$crud->edit_fields('equip_status_id', 'site_id', 'name', 'barcode_no');
+		
+		$crud->field_type('site_id', 'hidden', $site_id);
+		$crud->field_type('equip_status_id', 'hidden', iQS_EqStatus_InUse);
+		
+		// data validation
+		$crud->required_fields('equip_type_id', 'name');//, 'barcode_no');
+		//$crud->set_rules('barcode_no','Barcode','is_unique[v_all_barcodes.barcode_no]');
+		$crud->set_rules('name', 'Name', 'is_unique_with[site_id]');
+		$crud->set_rules('barcode_no', 'Barcode','required_if[name,1000]');
+		
+		$crud->display_as('equip_status_id','Status');
+		$crud->display_as('equip_type_id','Type');
+		$crud->display_as('name', 'Name');
+		$crud->display_as('barcode_no', 'Barcode');						
+		
+		$crud->order_by('equip_type_id, name', 'ASC');			
+		
+		//$crud->callback_before_insert($this, 'add_equip_item_callback');
+			
+		//krumo($crud);
 		
         $output = $crud->render();
 		
@@ -57,6 +73,13 @@ class Admin extends CI_Controller {
 		$this->load->view('includes/template', $data);				
 						
  	}
+	
+	function add_equip_item_callback($post_array)
+	{
+	
+		return $post_array;
+	}
+	
 	
 	function members()
     {

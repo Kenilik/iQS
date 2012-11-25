@@ -2,8 +2,8 @@
     	
 	    <?php    	
 	    	//cannot use the seesion helper as this is set in javascript in the set site admin function
-	    	$siteid = $this->input->cookie('current_siteid');
-			$sitename = $this->input->cookie('current_sitename');
+	    	$siteid = $this->input->cookie(iQS_COOKIE_SiteID);
+			$sitename = $this->input->cookie(iQS_COOKIE_SiteName);
 			
 			echo '<table><tr><td align="left">';
 			

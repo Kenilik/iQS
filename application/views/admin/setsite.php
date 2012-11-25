@@ -2,7 +2,7 @@
 	<h1>Set iQuickScan Site</h1>
 	<div id="body">
 		<p>
-			<a href=<?php echo site_url(); ?>/site/home>Home</a>
+			<a href=<?php echo site_url(); ?>/main/scanner>Home</a>
 		</p>
 
 		<p>

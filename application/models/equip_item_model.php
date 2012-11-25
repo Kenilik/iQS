@@ -15,5 +15,7 @@ class Equip_Item_model extends CI_Model {
 		}
 		return $q;
 	}
+	
+	
 
 }

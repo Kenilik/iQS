@@ -7,7 +7,7 @@
  * This function returns a readable value of a given cookie_name
  */
 
-function Get_Cookie( check_name ) {
+function getCookie( check_name ) {
 	// first we'll split this cookie up into name/value pairs
 	// note: document.cookie only returns name=value, not the other components
 	var a_all_cookies = document.cookie.split( ';' );
