@@ -3,7 +3,7 @@
 	<h1>Equipment List - CRUD</h1>
 	<div id="body">
 		<p>
-			<a href="../admin">Site Admin</a>
+			<?php echo anchor('admin', 'Site Admin') ?>
 		</p>
 		<p>
 			Maintain Equipment for: <?php echo $this->input->cookie(iQS_COOKIE_SiteName); ?>
