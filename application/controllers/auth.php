@@ -1,14 +1,18 @@
 <?php 
 
-class Auth extends CI_Controller {
+include_once APPPATH.'classes\User.php';
 
+class Auth extends MY_Controller
+{
 	function validate_login()
 	{
 		$username = $this->input->post('username');
 		$password =$this->input->post('password');
 		
-		$this->db->select('username, first_name, last_name, hashed_password');
-		$user = $this->db->get_where('users', array('username' => $username))->row();
+		$this->db->from('users');
+		$this->db->where('username', $username);
+		
+		$user = $this->db->get()->row('User');
 		
 		if ($user && $this->validate_password($user->hashed_password,$password)) {
 			$this->login($user);
@@ -32,18 +36,19 @@ class Auth extends CI_Controller {
 	
 	private function login($user)
 	{
+		$this->the_user = $user;
 		$newdata = array(
 			'is_logged_in' => TRUE,
 			'iqs_username' => $user->username,
 			'iqs_firstname' => $user->first_name,
 			'iqs_lastname' => $user->last_name);
-			//don't forget to also deal with user role
 			
 		$this->session->set_userdata($newdata);
 	}
 	
 	function logout()
 	{
+		$this->the_user = NULL;
 		$newdata = array(
 			'is_logged_in' => FALSE,
 			'iqs_username' => '',

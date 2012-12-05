@@ -3,10 +3,10 @@
 
 	<div id="body">
 		<p>
-			<a href="../site/equipinuse">Equipment Signed Out</a>
+			<a href="../main/equipinuse">Equipment Signed Out</a>
 			<?php 
 				if($this->session->userdata('is_logged_in') === TRUE){
-					echo '<a href="../admin">Site Administration</a>' ; 
+					echo '<a href="../adm">Site Administration</a>' ; 
 				}
 			?>
 		</p>

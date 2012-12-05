@@ -31,6 +31,20 @@ class User_model extends CI_Model {
 		return $salt . $hash;
 	}
 	
+	public function get_admin_roles($user_id)
+	{
+		$this->db->select('role_id');
+		$this->db->from('user_admin_roles');
+		$this->db->where('user_id', $user_id);
+		$query = $this->db->get();
+
+		if($query->num_rows == 0){
+			return FALSE;
+		} else {
+			return $query->result();
+		}
+	}
+	
 /*
 	function validate()
 	{

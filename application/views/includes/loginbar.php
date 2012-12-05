@@ -1,7 +1,6 @@
 <div id="login_bar">
-    	
 	    <?php    	
-	    	//cannot use the seesion helper as this is set in javascript in the set site admin function
+	    	//cannot use the session helper as this cookie is set in javascript in the set site admin function
 	    	$siteid = $this->input->cookie(iQS_COOKIE_SiteID);
 			$sitename = $this->input->cookie(iQS_COOKIE_SiteName);
 			
@@ -10,10 +9,10 @@
 			if ($siteid==FALSE) {
 				echo '<font align=left color=red>Site Administrator must login and configure this location before iQuickScan can be used.</font>';
 			} else {
-				echo '<font align=left>iQuickScan for ' . $sitename . ' @ : clock ';
+				echo '<font align=left>iQuickScan for '.$sitename.' @ : clock ';
 			}
 			echo '</td><td align="right">';
-			//krumo($this->session->userdata('is_logged_in') );
+			//krumo($this->session->userdata('is_logged_in'));
 			if($this->session->userdata('is_logged_in') == TRUE) {
 				echo form_open('auth/logout') . $this->session->userdata('iqs_username') . " is logged in. " . form_submit('submit', 'logout') . form_close();
 			} else {
@@ -27,8 +26,4 @@
 			}
 			echo '</td></tr></table>';
 		?>
-    	<script>
-    		
-    		
-    	</script>
 </div><!-- end loginbar-->

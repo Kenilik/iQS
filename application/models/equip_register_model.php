@@ -1,7 +1,9 @@
 <?php
 
+include APPPATH . 'classes/Equip_In_Use.php';
+
 class Equip_Register_model extends CI_Model {
-	
+		
 	// return single row with barcode number lookup
 	function getBarcodeNo($barcode_no)  
 	{
@@ -31,7 +33,17 @@ class Equip_Register_model extends CI_Model {
 		} 
 		return $q;
 	}
-	
+
+	// returns a query result of the equipment currently in use for a given User
+	function getEquipInUseByUserTest($user_id, $retObj = FALSE)
+	{
+		$q = $this->db->get_where('v_equip_in_use', array('user_id' => $user_id));
+		if( ! $q->num_rows()>0) {
+			return FALSE; //return false if there is no equip in use for this QID
+		} 
+		return (!$retObj) ? $q : $q->result('Equip_In_Use') ;
+	}
+
 	// returns a query result of the equipment currently in use for a given item of equipment or for all equipment
 	function getEquipIDInUse($equip_item_id = FALSE)
 	{ 

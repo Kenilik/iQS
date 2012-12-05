@@ -1,30 +1,31 @@
-<?php 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
-class Main extends CI_Controller {
+class Main extends MY_Controller { 
 
 	function __construct() 
 	{
 		parent::__construct();
-		$this->__site_is_set_up();
+		//$this->__is_site_set_up();
 	}
-
-	function __site_is_set_up()
+/*
+	function __is_site_set_up()
 	{
-		$site_is_set_up = $this->input->cookie('current_siteid');
+		$is_site_set_up = $this->input->cookie('current_siteid');
 		
-		if($site_is_set_up==FALSE) {
+		if($is_site_set_up==FALSE) {
 			$this->load->view('includes/header');
 			$this->load->view('includes/loginbar');
 			$this->load->view('includes/footer');
 		}		
 	}
-
+*/
 	function equipinuse()
 	{
 		$data['EquipInUse'] = $this->Equip_Register_model->getEquipIDInUse();
 
 		$data['main_content'] = 'equipinuse' ;
 		$data['header_title'] = "Equipment In Use" ;
+		$data['the_user'] = $the_user;
 		$this->load->view('includes/template', $data);				
 	}
 
@@ -211,7 +212,8 @@ class Main extends CI_Controller {
 		
 		$data['main_content'] = 'scanner' ;
 		$data['header_title'] = 'iQuickScan Scanner' ;		 
-				
+		$data['theuser'] = $this->the_user;
+		
 		$this->load->view('includes/template', $data);		
 	}
 		
