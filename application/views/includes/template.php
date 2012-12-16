@@ -2,7 +2,7 @@
 
 <?php $this->load->view('includes/loginbar'); ?>
 
-<?php $this->load->view('includes/menubar', $theuser); ?>
+<?php $this->load->view('includes/menubar'); ?>
 
 <div id="main_content">
 	<?php $this->load->view($main_content); ?>

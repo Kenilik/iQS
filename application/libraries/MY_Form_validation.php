@@ -45,16 +45,5 @@ class MY_Form_validation extends CI_Form_validation {
 	 
 		return FALSE;
 	}
-	
-	
-	//is_unique_with[site_id,equip_type_id]
-	//$str = value of field on which rule is set
-	function is_unique_with($str, $fields)
-	{
-		//$fields	= explode(',', $fields);
-		$this->CI->form_validation->set_message('is_unique_with', "STR{$str}  FIELD{$fields}");
-		return TRUE;
-		
-	}
-	
+			
 }

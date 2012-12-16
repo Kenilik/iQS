@@ -1,7 +1,7 @@
 <?php
 
-class User_model extends CI_Model {
-
+class User_model extends CI_Model 
+{	
 	function get($user_id = FALSE)
 	{
 		if( ! $user_id == FALSE) {
@@ -15,11 +15,29 @@ class User_model extends CI_Model {
 		}
 		return $q;
 	}
+
+	/*
+	 * canAdminSite takes a username and site_id and checks if this username is setup as an administrator for that site
+	 * Returns TRUE if can admin otherswise FALSE
+	 * 
+	 */	
+	function canAdminSite($username, $site_id)
+	{
+		return $this->db->get_where('v_site_admins', array('site_id' => $site_id, 'username' => $username))->num_rows()>0;
+	}
+	
+	function getSiteAdmins($site_id)
+	{
+		$q = $this->db->get_where('v_site_admins', array('admin_site_id' => $site_id));
+		if( ! $q->num_rows() > 0) {
+			$q = FALSE;
+		}
+		return $q;
+	}
 	
 	function set_password($username, $plaintext)
 	{
-		//$this->hashedpassword = $this->hash_password($plaintext);
-		$this->db->where('id', $username);
+		$this->db->where('username', $username);
 		$this->db->update('users', array('hashed_password' => $this->hash_password($plaintext)));
 	}
 	
@@ -45,17 +63,17 @@ class User_model extends CI_Model {
 		}
 	}
 	
-/*
-	function validate()
+	function is_unique_except($id = 0, $username)
 	{
-		$this->db->where('username', $this->input->post('username'));
-		$this->db->where('password', $this->input->post('password'));
-		$query = $this->db->get('users');
+		$this->db->select('id');
+		$this->db->from('users');
+		$this->db->where('id !=', $id);
+		$this->db->where('username', $username);
 		
-		if($query->num_rows == 1){
-			return TRUE;
-		}
+		//can only ever return 1 row due to db constraints. 
+		$query = $this->db->get();
+		
+		return ($query->num_rows() == 0) ? TRUE : FALSE ;		
 	}
- * 
- */
+
 }

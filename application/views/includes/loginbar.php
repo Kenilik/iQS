@@ -1,20 +1,22 @@
 <div id="login_bar">
 	    <?php    	
 	    	//cannot use the session helper as this cookie is set in javascript in the set site admin function
+	    	
 	    	$siteid = $this->input->cookie(iQS_COOKIE_SiteID);
 			$sitename = $this->input->cookie(iQS_COOKIE_SiteName);
-			
+					
 			echo '<table><tr><td align="left">';
 			
 			if ($siteid==FALSE) {
-				echo '<font align=left color=red>Site Administrator must login and configure this location before iQuickScan can be used.</font>';
+				echo '<font color=red>Site Administrator must login and configure this location before iQuickScan can be used.</font>';
 			} else {
-				echo '<font align=left>iQuickScan for '.$sitename.' @ : clock ';
+				echo 'iQuickScan for <span id="site_name">'.$sitename.'</span> @ : clock';
 			}
 			echo '</td><td align="right">';
-			//krumo($this->session->userdata('is_logged_in'));
-			if($this->session->userdata('is_logged_in') == TRUE) {
-				echo form_open('auth/logout') . $this->session->userdata('iqs_username') . " is logged in. " . form_submit('submit', 'logout') . form_close();
+			
+			if($this->session->userdata(iQS_COOKIE_UserIsLoggedIn) == TRUE) {
+				echo form_open('auth/logout') . $this->session->userdata(iQS_COOKIE_Username) . " is logged in. " . form_submit('submit', 'logout') . form_close();
+				echo '</td><td><div id=login_error>' . $this->session->flashdata('error') . '</div></td><td>';
 			} else {
 				echo '</td><td><div id=login_error>' . $this->session->flashdata('error') . '</div></td><td>';
 				echo form_open('auth/validate_login');

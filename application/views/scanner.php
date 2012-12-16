@@ -1,15 +1,5 @@
 <div id="container">
-	<h1>Welcome to iQuickScan!</h1>
-
 	<div id="body">
-		<p>
-			<a href="../main/equipinuse">Equipment Signed Out</a>
-			<?php 
-				if($this->session->userdata('is_logged_in') === TRUE){
-					echo '<a href="../adm">Site Administration</a>' ; 
-				}
-			?>
-		</p>
 		<p>
 			<?php 
 				$attrib = array('name' => 'BCScanner', 'id' =>'BCScanner' );
@@ -54,8 +44,8 @@
 						
 						switch(true){	
 							case $bc_row->barcode_type=="user":
-								if ($bc_row->status_id==0) { // if the member status is active
-									if ( ! $EquipInUse==false) {
+								if ($bc_row->user_is_active==TRUE) { // if the member status is active
+									if ( ! $EquipInUse==FALSE) {
 										echo $this->table->generate($EquipInUse);
 									} else {
 										echo "No equipment currently signed out.";

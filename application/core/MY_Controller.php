@@ -12,7 +12,7 @@ class MY_Controller extends CI_Controller
 
 	protected function is_logged_in()
 	{
-		$is_logged_in = $this->session->userdata('is_logged_in');
+		$is_logged_in = $this->session->userdata(iQS_COOKIE_UserIsLoggedIn);
 		return (!isset($is_logged_in) || $is_logged_in != FALSE);
 	}
 
@@ -23,7 +23,7 @@ class MY_Controller extends CI_Controller
 			$this->load->view('includes/header', 'Administrator Login Required');
 			$this->load->view('includes/loginbar');
 			$this->load->view('includes/footer');
-		}		
+		}
 	}
 }
 
@@ -33,43 +33,28 @@ class Admin_Controller extends MY_Controller
     {
         parent::__construct();
 		
-		krumo($this->the_user);
-		
-        if($this->is_logged_in() && $this->the_user->is_site_admin){            	
-			//do nothing
-            //$data->the_user = $this->the_user;
-            //$this->load->vars($data);
+        if($this->is_logged_in() && $this->session->userdata(iQS_COOKIE_UserIsSiteAdmin)){
+        	//do nothing i.e. don't redirect-allow the user to continue to where they were going.
         }
         else {
 			$this->session->set_flashdata('error', 'You do not have administrator access.');
-			die();
 			redirect('main/scanner');
         }
 	}  
 }
 
-/*
-class Super_Admin_Controller extends MY_Controller {
-
-    public function __construct() {
-
+class Super_Admin_Controller extends MY_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
-
-        if($this->ion_auth->in_group('super')) {
-            $this->the_user = $this->ion_auth->user()->row();
-            $data->the_user = $this->the_user;
-            $this->load->vars($data);
+		
+        if($this->is_logged_in() && $this->session->userdata(iQS_COOKIE_UserIsSuperAdmin)){
+        	//do nothing i.e. don't redirect-allow the user to continue to where they were going.
         }
         else {
-			$this->session->set_flashdata('error', 'You do not have administrator access. Contact your system administrator.');
+			$this->session->set_flashdata('error', 'You do not have super administrator access - contact helpdesk.');
 			redirect('main/scanner');
         }
-    }
-
-	private function is_logged_in() 
-	{
-		$is_logged_in = $this->session->userdata('is_logged_in');		
-		return ( ! isset($is_logged_in) || $is_logged_in != TRUE);
-	}
- * 
- */
+	}  
+}

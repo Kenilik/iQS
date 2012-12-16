@@ -202,7 +202,7 @@ $config['log_path'] = '';
 | codes to set your own date formatting
 |
 */
-$config['log_date_format'] = 'Y-m-d H:i:s';
+$config['log_date_format'] = 'd-m-Y H:i:s';
 
 /*
 |--------------------------------------------------------------------------
@@ -246,11 +246,11 @@ $config['encryption_key'] = 'c%ndqqTJ-z_|YFG2ccU2bM6(8r*46!)7';
 */
 $config['sess_cookie_name']		= 'iqs';
 $config['sess_expiration']		= 3000;
-$config['sess_expire_on_close']	= FALSE;
+$config['sess_expire_on_close']	= TRUE;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= TRUE;
 $config['sess_table_name']		= 'iqs_session';
-$config['sess_match_ip']		= FALSE;
+$config['sess_match_ip']		= TRUE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;
 

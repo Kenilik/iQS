@@ -5,28 +5,51 @@ class Main extends MY_Controller {
 	function __construct() 
 	{
 		parent::__construct();
-		//$this->__is_site_set_up();
 	}
-/*
-	function __is_site_set_up()
+
+	function about()
 	{
-		$is_site_set_up = $this->input->cookie('current_siteid');
-		
-		if($is_site_set_up==FALSE) {
-			$this->load->view('includes/header');
-			$this->load->view('includes/loginbar');
-			$this->load->view('includes/footer');
-		}		
+		$data['SiteAdmins'] = $this->User_model->getSiteAdmins(get_cookie(iQS_COOKIE_SiteID));
+
+		$data['main_content'] = 'about' ;
+		$data['header_title'] = "About iQuickScan" ;
+		$this->load->view('includes/template', $data);				
 	}
-*/
+
 	function equipinuse()
 	{
+        $crud = new grocery_CRUD();
+		$crud->set_theme('datatables');
+	
+		$site_id = get_cookie(iQS_COOKIE_SiteID);
+		
+		$crud->set_table('equip_register');
+		$crud->where('dt_in', NULL);
+        
+        //$crud->order_by('equip_type_name', 'ASC');
+		
+		$crud->set_relation('site_id', 'sites', 'name');
+		
+		$crud->columns('');
+		
+		$crud->display_as('username','QID');
+
+		
+        $output = $crud->render();
+ 		
+ 		$data['groceryCRUD_output'] = $output; 
+		$data['main_content'] = 'equipinuse';
+		$data['header_title'] = "Equipment In Use";
+		
+		$this->load->view('includes/template', $data);				
+		
+		/*
 		$data['EquipInUse'] = $this->Equip_Register_model->getEquipIDInUse();
 
 		$data['main_content'] = 'equipinuse' ;
 		$data['header_title'] = "Equipment In Use" ;
-		$data['the_user'] = $the_user;
-		$this->load->view('includes/template', $data);				
+		$this->load->view('includes/template', $data);
+		*/				
 	}
 
 	function scanner() 
@@ -35,7 +58,6 @@ class Main extends MY_Controller {
 		//this value will be false if the form is being 
 		//displayed for the first time and not submitted by the user	
 		$bc = $this->input->post('Barcode');
-		
 		
 		$ScannerStatus = $this->input->post('ScannerStatus');
 		if ($ScannerStatus===FALSE) {
@@ -86,7 +108,7 @@ class Main extends MY_Controller {
 				switch(true){
 					case $bc_row->barcode_type=="user":
 						// if the user status is active
-						if ($bc_row->status_id==0) {
+						if ($bc_row->user_is_active==TRUE) {
 							// get their list of equip in use 
 							$data['EquipInUse'] = $this->Equip_Register_model->getEquipInUseByUser($bc_row->id); 
 							$data['UserFeedback'] = "Scan your equipment...";
@@ -107,7 +129,7 @@ class Main extends MY_Controller {
 						}
 						
 						// if the equipment is in service or tempOoS
-						if ($bc_row->status_id==0 || $bc_row->status_id==1){
+						if ($bc_row->equip_status_id != iQS_EqStatus_PermOoS){
 							// check if the page is waiting for equipment to be signed back in (i.e. the 'Default' state which is also waiting for a user to scan their bc)
 							if ($ScannerStatus == iQS_ScannerStatus_Default) {
 								// check if the equipment is signed out
@@ -129,7 +151,7 @@ class Main extends MY_Controller {
 								$waitingUser_row = $this->User_model->get($WaitingUserID)->row();
 								
 								// if the equipment is Temp OoS
-								if ($bc_row->status_id==1) {
+								if ($bc_row->equip_status_id==iQS_EqStatus_TempOoS) {
 									/*
 									 * WILL NEED TO THINK HOW TO DEAL WITH PROMPTING THE USER WHETHER THEY WANT TO USE 
 									 * EQUIPMENT THAT IS FLAGGED AS TEMP OOS
@@ -212,7 +234,6 @@ class Main extends MY_Controller {
 		
 		$data['main_content'] = 'scanner' ;
 		$data['header_title'] = 'iQuickScan Scanner' ;		 
-		$data['theuser'] = $this->the_user;
 		
 		$this->load->view('includes/template', $data);		
 	}
