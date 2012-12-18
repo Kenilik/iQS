@@ -9,9 +9,10 @@
 define('iQS_COOKIE_SiteID','current_siteid');
 define('iQS_COOKIE_SiteName','current_sitename');
 define('iQS_COOKIE_UserIsLoggedIn','user_is_logged_in');
-define('iQS_COOKIE_Username','user_username');
+define('iQS_COOKIE_Username','username');
 define('iQS_COOKIE_UserIsSiteAdmin','user_is_site_admin');
 define('iQS_COOKIE_UserIsSuperAdmin','user_is_super_admin');
+define('iQS_COOKIE_UserRoles','user_roles');
 
 /*
 *--------------------------------------------------------------------------
@@ -46,6 +47,17 @@ define('iQS_Username_ExactLength',6);
 define('iQS_Name_MinLength',2);
 define('iQS_Name_MaxLength',45);
 
+/*
+*--------------------------------------------------------------------------
+*	Roles used in iQS 
+*--------------------------------------------------------------------------
+*/
+define('iQS_UserRole_SuperAdmin',		0);
+define('iQS_UserRole_SiteAdmin',		1);
+define('iQS_UserRole_FirearmsUser',		2);
+define('iQS_UserRole_FirearmsAdmin',	3);
+define('iQS_UserRole_DragerUser',		4);
+define('iQS_UserRole_DragerAdmin',		5);
 
 /* End of file iqs_constants.php */
 /* Location: ./application/libraries/iqs_constants.php */

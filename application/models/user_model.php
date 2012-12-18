@@ -16,19 +16,9 @@ class User_model extends CI_Model
 		return $q;
 	}
 
-	/*
-	 * canAdminSite takes a username and site_id and checks if this username is setup as an administrator for that site
-	 * Returns TRUE if can admin otherswise FALSE
-	 * 
-	 */	
-	function canAdminSite($username, $site_id)
-	{
-		return $this->db->get_where('v_site_admins', array('site_id' => $site_id, 'username' => $username))->num_rows()>0;
-	}
-	
 	function getSiteAdmins($site_id)
 	{
-		$q = $this->db->get_where('v_site_admins', array('admin_site_id' => $site_id));
+		$q = $this->db->get_where('v_site_admins', array('site_id' => $site_id));
 		if( ! $q->num_rows() > 0) {
 			$q = FALSE;
 		}
@@ -45,15 +35,16 @@ class User_model extends CI_Model
 	{
 		$salt = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
 		$hash = hash('sha256', $salt . $password);
-
+		
 		return $salt . $hash;
 	}
 	
-	public function get_admin_roles($user_id)
+	public function get_user_roles($username)
 	{
 		$this->db->select('role_id');
-		$this->db->from('user_admin_roles');
-		$this->db->where('user_id', $user_id);
+		$this->db->from('user_roles');
+		$this->db->join('users', 'user_roles.user_id = users.id');
+		$this->db->where('users.username', $username);
 		$query = $this->db->get();
 
 		if($query->num_rows == 0){

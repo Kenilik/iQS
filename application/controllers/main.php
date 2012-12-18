@@ -7,13 +7,9 @@ class Main extends MY_Controller {
 		parent::__construct();
 	}
 
-	function about()
+	function index()
 	{
-		$data['SiteAdmins'] = $this->User_model->getSiteAdmins(get_cookie(iQS_COOKIE_SiteID));
-
-		$data['main_content'] = 'about' ;
-		$data['header_title'] = "About iQuickScan" ;
-		$this->load->view('includes/template', $data);				
+		redirect ('help/about');
 	}
 
 	function equipinuse()

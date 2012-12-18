@@ -7,8 +7,8 @@
 					
 			echo '<table><tr><td align="left">';
 			
-			if ($siteid==FALSE) {
-				echo '<font color=red>Site Administrator must login and configure this location before iQuickScan can be used.</font>';
+			if ($siteid===FALSE) {
+				echo '<font color=red>Admin Mode</font>';
 			} else {
 				echo 'iQuickScan for <span id="site_name">'.$sitename.'</span> @ : clock';
 			}

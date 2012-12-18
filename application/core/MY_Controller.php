@@ -2,27 +2,47 @@
 
 class MY_Controller extends CI_Controller 
 {
-	protected $the_user = NULL;
-
     public function __construct() 
     {
         parent::__construct();
 		$this->is_site_set_up();
+		
+		$is_site_set_up = $this->is_site_set_up();	
+		$is_logged_in = $this->is_logged_in();
+
+		//$this->session->set_flashdata('error','$is_site_set_up: '.$is_site_set_up. '-- $is_logged_in: '.$is_logged_in);
+		
+		if ($is_site_set_up==FALSE && $is_logged_in==FALSE){
+			redirect('login');
+		}
 	}
 
-	protected function is_logged_in()
+	public function is_logged_in()
 	{
 		$is_logged_in = $this->session->userdata(iQS_COOKIE_UserIsLoggedIn);
 		return (!isset($is_logged_in) || $is_logged_in != FALSE);
 	}
 
-	private function is_site_set_up()
+	public function is_site_set_up()
 	{
 		$is_site_set_up = $this->input->cookie('current_siteid');
-		if($is_site_set_up==FALSE) {
+		/*if($is_site_set_up==FALSE) {
 			$this->load->view('includes/header', 'Administrator Login Required');
 			$this->load->view('includes/loginbar');
-			$this->load->view('includes/footer');
+			$this->load->view('includes/footer'); 
+			die();
+		}
+		 * 
+		 */
+	}
+	
+	protected function check_user_role($role)
+	{
+		$current_user_roles = explode($this->session->userdata(iQS_COOKIE_UserRoles));
+		if (array_search(iQS_UserRole_SuperAdmin, $current_user_roles)){
+			return TRUE;
+		} else {
+			return array_search($role, $current_user_roles);		
 		}
 	}
 }
@@ -33,12 +53,12 @@ class Admin_Controller extends MY_Controller
     {
         parent::__construct();
 		
-        if($this->is_logged_in() && $this->session->userdata(iQS_COOKIE_UserIsSiteAdmin)){
+        if($this->is_logged_in() && $this->check_user_role(iQS_COOKIE_UserIsSiteAdmin)){
         	//do nothing i.e. don't redirect-allow the user to continue to where they were going.
         }
         else {
 			$this->session->set_flashdata('error', 'You do not have administrator access.');
-			redirect('main/scanner');
+			redirect('help/about');
         }
 	}  
 }
@@ -49,12 +69,22 @@ class Super_Admin_Controller extends MY_Controller
     {
         parent::__construct();
 		
-        if($this->is_logged_in() && $this->session->userdata(iQS_COOKIE_UserIsSuperAdmin)){
+		$current_user_roles = explode($this->session->userdata(iQS_COOKIE_UserRoles));
+		
+		if (array_search(iQS_UserRole_SuperAdmin, $current_user_roles)){
+			//do noti
+		} else {
+			$x = array_search($role, $current_user_roles);		
+		}
+		
+		
+		
+        if($this->is_logged_in() && $this->check_user_role(iQS_COOKIE_UserIsSuperAdmin)){
         	//do nothing i.e. don't redirect-allow the user to continue to where they were going.
         }
         else {
-			$this->session->set_flashdata('error', 'You do not have super administrator access - contact helpdesk.');
-			redirect('main/scanner');
+			$this->session->set_flashdata('error', 'XXX'.$current_user_roles.'XXX '.' XXX '.array_search(iQS_UserRole_SuperAdmin, $current_user_roles).'XXX You do not have super administrator access - contact helpdesk.');
+			redirect('help/about');
         }
 	}  
 }

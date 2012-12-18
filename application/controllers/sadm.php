@@ -8,7 +8,8 @@ class Sadm extends Super_Admin_Controller
 	}
 	
 	function setsite()
-	{		
+	{
+		//cannot use the session helper as this cookie should not expire like the session helper cookies do.	
 		if ($this->input->post('ajax')) {
 			$newdata = array(
 				'name' => iQS_COOKIE_SiteID,
