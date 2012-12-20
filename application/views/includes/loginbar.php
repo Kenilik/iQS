@@ -8,7 +8,9 @@
 			echo '<table><tr><td align="left">';
 			
 			if ($siteid===FALSE) {
-				echo '<font color=red>Admin Mode</font>';
+				if ($this->session->userdata(iQS_COOKIE_UserIsLoggedIn)!==FALSE){
+					echo '<font color=red>Admin Mode</font>';
+				}
 			} else {
 				echo 'iQuickScan for <span id="site_name">'.$sitename.'</span> @ : clock';
 			}

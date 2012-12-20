@@ -52,12 +52,12 @@ define('iQS_Name_MaxLength',45);
 *	Roles used in iQS 
 *--------------------------------------------------------------------------
 */
-define('iQS_UserRole_SuperAdmin',		0);
-define('iQS_UserRole_SiteAdmin',		1);
-define('iQS_UserRole_FirearmsUser',		2);
-define('iQS_UserRole_FirearmsAdmin',	3);
-define('iQS_UserRole_DragerUser',		4);
-define('iQS_UserRole_DragerAdmin',		5);
+define('iQS_UserRole_SuperAdmin',		10);
+define('iQS_UserRole_SiteAdmin',		11);
+define('iQS_UserRole_FirearmsUser',		12);
+define('iQS_UserRole_FirearmsAdmin',	13);
+define('iQS_UserRole_DragerUser',		14);
+define('iQS_UserRole_DragerAdmin',		15);
 
 /* End of file iqs_constants.php */
 /* Location: ./application/libraries/iqs_constants.php */

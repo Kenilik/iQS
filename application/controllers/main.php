@@ -9,43 +9,18 @@ class Main extends MY_Controller {
 
 	function index()
 	{
+		//I need to work out what to do when user logged in but site not set up
+		
 		redirect ('help/about');
 	}
 
 	function equipinuse()
 	{
-        $crud = new grocery_CRUD();
-		$crud->set_theme('datatables');
-	
-		$site_id = get_cookie(iQS_COOKIE_SiteID);
-		
-		$crud->set_table('equip_register');
-		$crud->where('dt_in', NULL);
-        
-        //$crud->order_by('equip_type_name', 'ASC');
-		
-		$crud->set_relation('site_id', 'sites', 'name');
-		
-		$crud->columns('');
-		
-		$crud->display_as('username','QID');
-
-		
-        $output = $crud->render();
- 		
- 		$data['groceryCRUD_output'] = $output; 
-		$data['main_content'] = 'equipinuse';
-		$data['header_title'] = "Equipment In Use";
-		
-		$this->load->view('includes/template', $data);				
-		
-		/*
 		$data['EquipInUse'] = $this->Equip_Register_model->getEquipIDInUse();
 
 		$data['main_content'] = 'equipinuse' ;
 		$data['header_title'] = "Equipment In Use" ;
 		$this->load->view('includes/template', $data);
-		*/				
 	}
 
 	function scanner() 

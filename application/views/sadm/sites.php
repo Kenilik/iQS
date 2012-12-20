@@ -6,11 +6,10 @@
 				foreach ($site_groups->result() as $site_group) {
 					echo '<option value=' . $site_group->id . '>'. $site_group->name .'</option>'; 
 				}
-				echo '</select></p>';			
+				echo '</select></p>';
 		?>
 		<p>Sites</p>
 		<p><div id="gcrudoutput"><?php echo $output; ?></div></p>
-		
 	</div>
 </div>
 <script type="text/javascript">

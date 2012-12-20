@@ -2,6 +2,27 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+#bc {
+padding: 0px;
+width: 100%;
+float: left;
+}
+
+#bc ul{
+list-style: none;
+margin: 0px;
+padding: 0px;
+}
+
+#bc li {
+float: left;
+}
+
+#bc a {
+text-decoration: none;
+}
+
+
 /*
  * The following styles are for the display of the menu
  * See: http://ago.tanfa.co.uk/css/examples/menu/tutorial-h.html
